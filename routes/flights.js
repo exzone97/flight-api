@@ -192,4 +192,89 @@ router.post('/', async function (req, res, next) {
     }
 });
 
+/**
+ * Route to Update the data by the ID of the record
+ */
+router.patch('/:id', async function (req, res, next) {
+    try {
+        const flightId = req.params.id;
+        const {
+            flightNumber,
+            departurePort,
+            arrivalPort,
+            departureTime,
+            arrivalTime
+        } = req.body;
+        let updatedFlight = {
+            id: parseInt(flightId),
+            flightNumber,
+            departurePort,
+            arrivalPort,
+            departureTime,
+            arrivalTime
+        }
+        let flightData = getFlightData();
+        const findExist = flightData.find(flight => flight.id == flightId)
+        // check if the id exist or not
+        if (!findExist) {
+            // if not exist then return status error
+            return res.status(409).json({
+                'status': 'ERROR',
+                'messages': 'Flight Does Not Exist',
+                'data': []
+            })
+        }
+        else {
+            // if exist then update the data.
+            const flightFilter = flightData.filter(flight => flight.id != flightId)
+            flightFilter.push(updatedFlight)
+            saveFlightData(flightFilter)
+            return res.status(201).json({
+                'status': 'OK',
+                'messages': "Success Update Flight Data",
+                'data': updatedFlight
+            })
+        }
+    } catch (err) {
+        res.status(400).json({
+            'status': 'ERROR',
+            'messages': err.message,
+            'data': [],
+        })
+    }
+});
+
+/**
+ * Route to delete the exist flight data by record ID
+ */
+router.delete('/:id', async function (req, res, next) {
+    try {
+        const flightId = req.params.id;
+        let flightData = getFlightData();
+        const filterFlight = flightData.filter(flight => flight.id != flightId)
+        const removedFlight = flightData.filter(flight => flight.id == flightId)
+        // Check if Flight is Exist
+        if (flightData.length === filterFlight.length) {
+            return res.status(409).json({
+                'status': 'ERROR',
+                'messages': 'Flight Does Not Exist',
+                'data': []
+            })
+        }
+        else {
+            saveFlightData(filterFlight);
+            return res.status(201).json({
+                'status': 'OK',
+                'messages': "Flight Removed.",
+                'data': removedFlight
+            })
+        }
+    } catch (err) {
+        res.status(400).json({
+            'status': 'ERROR',
+            'messages': err.message,
+            'data': [],
+        })
+    }
+});
 module.exports = router;
