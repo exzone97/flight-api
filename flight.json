@@ -1,0 +1,5 @@
+[
+    {"id":1,"flightNumber":"EK001","departurePort":"INA","arrivalPort":"SYD","departureTime":"2020-06-10T09:00:23Z","arrivalTime":"2020-08-22T10:25:23Z"},
+    {"id":2,"flightNumber":"QF374","departurePort":"THA","arrivalPort":"INA","departureTime":"2020-06-10T09:00:23Z","arrivalTime":"2020-08-23T10:25:23Z"},
+    {"id":3,"flightNumber":"XC737","departurePort":"NYC","arrivalPort":"SYD","departureTime":"2020-06-10T09:00:23Z","arrivalTime":"2020-08-24T10:25:23Z"}
+]
