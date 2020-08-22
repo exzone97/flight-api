@@ -226,14 +226,39 @@ router.patch('/:id', async function (req, res, next) {
         }
         else {
             // if exist then update the data.
-            const flightFilter = flightData.filter(flight => flight.id != flightId)
-            flightFilter.push(updatedFlight)
-            saveFlightData(flightFilter)
-            return res.status(201).json({
-                'status': 'OK',
-                'messages': "Success Update Flight Data",
-                'data': updatedFlight
-            })
+            let emptyData = [];
+            if (flightNumber == null || flightNumber == "") {
+                emptyData.push("flightNumber")
+            }
+            if (departurePort == null || departurePort == "") {
+                emptyData.push("departurePort")
+            }
+            if (arrivalPort == null || arrivalPort == "") {
+                emptyData.push("arrivalPort")
+            }
+            if (departureTime == null || departureTime == "") {
+                emptyData.push("departureTime")
+            }
+            if (arrivalTime == null || arrivalTime == "") {
+                emptyData.push("arrivalTime")
+            }
+            if (emptyData.length > 0) {
+                return res.status(401).json({
+                    'status': 'ERROR',
+                    'messages': "Data Cannot Be Empty " + emptyData.toString(),
+                    'data': []
+                })
+            }
+            else {
+                const flightFilter = flightData.filter(flight => flight.id != flightId)
+                flightFilter.push(updatedFlight)
+                saveFlightData(flightFilter)
+                return res.status(201).json({
+                    'status': 'OK',
+                    'messages': "Success Update Flight Data",
+                    'data': updatedFlight
+                })
+            }
         }
     } catch (err) {
         res.status(400).json({
