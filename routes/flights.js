@@ -19,6 +19,15 @@ const getFlightData = () => {
 }
 
 /**
+ * Function to write the json file
+ * @param {*} data 
+ */
+const saveFlightData = (data) => {
+    const stringifyData = JSON.stringify(data)
+    fs.writeFileSync('flight.json', stringifyData)
+}
+
+/**
  * Function that use to get Date from ISOString Date.
  * @param {*} ISOString (ex. "2020-08-22T10:25:23Z")
  * return: date from param (ex. "2020-08-22")
@@ -115,6 +124,70 @@ router.get('/:airlineCode', async function (req, res, next) {
             'status': 'ERROR',
             'messages': err.messages,
             'data': []
+        })
+    }
+});
+
+/**
+ * Route for post data.
+ */
+router.post('/', async function (req, res, next) {
+    try {
+        let flightData = getFlightData()
+        let lastId = flightData[flightData.length - 1].id
+        let newId = lastId + 1
+        const {
+            flightNumber,
+            departurePort,
+            arrivalPort,
+            departureTime,
+            arrivalTime
+        } = req.body;
+        let newFlight = {
+            id: newId,
+            flightNumber,
+            departurePort,
+            arrivalPort,
+            departureTime,
+            arrivalTime
+        }
+        let emptyData = [];
+        if (flightNumber == null || flightNumber == "") {
+            emptyData.push("flightNumber")
+        }
+        if (departurePort == null || departurePort == "") {
+            emptyData.push("departurePort")
+        }
+        if (arrivalPort == null || arrivalPort == "") {
+            emptyData.push("arrivalPort")
+        }
+        if (departureTime == null || departureTime == "") {
+            emptyData.push("departureTime")
+        }
+        if (arrivalTime == null || arrivalTime == "") {
+            emptyData.push("arrivalTime")
+        }
+        if (emptyData.length > 0) {
+            return res.status(401).json({
+                'status': 'ERROR',
+                'messages': "Data Cannot Be Empty " + emptyData.toString(),
+                'data': []
+            })
+        }
+        else {
+            flightData.push(newFlight)
+            saveFlightData(flightData)
+            return res.status(201).json({
+                'status': 'OK',
+                'messages': "Success Add Flight Data",
+                'data': newFlight
+            })
+        }
+    } catch (err) {
+        res.status(400).json({
+            'status': 'ERROR',
+            'messages': err.message,
+            'data': [],
         })
     }
 });
