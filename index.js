@@ -7,6 +7,7 @@ const path = require('path');
 
 // Route Variable 
 let indexRouter = require('./routes/index');
+let flightRouter = require('./routes/flights');
 
 // Express Config
 const app = express();
@@ -21,6 +22,7 @@ app.use(cookieParser());
 
 // Route URL to APi
 app.use('/', indexRouter);
+app.use('/flights', flightRouter);
 
 // Catch 404 and forward to error handler
 app.use(function (req, res, next) {
